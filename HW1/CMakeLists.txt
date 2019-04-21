@@ -11,7 +11,7 @@ SET(CMAKE_CXX_FLAGS  "${FAST_COMPILE_FLAGS}")
 find_package( BLAS REQUIRED )
 message( STATUS BLAS found: ${BLAS_LIBRARIES} )
 
-add_executable(HW1 main.cpp)
+add_executable(HW1 main.cpp task1.cpp task2.cpp)
 
 target_include_directories(HW1
         PRIVATE
