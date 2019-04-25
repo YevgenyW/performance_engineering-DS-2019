@@ -7,14 +7,15 @@ int main()
 
     printf("Function \t Time \n");
 
-//    test_task1_slow();
-//    test_task1_SSE();
-//
-//    test_task2_blas();
-//    test_task2_SSE();
+    test_task1_slow();
+    test_task1_SSE();
 
+    test_task2_blas();
+    test_task2_SSE();
+
+    test_task3_strstr();
     test_task3_slow();
+    test_task3_SSE();
 
-    std::cout<<"end"<<std::endl;
     return 0;
 }
