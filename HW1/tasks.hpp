@@ -9,8 +9,6 @@
 #include <xmmintrin.h>
 #include <smmintrin.h>
 
-constexpr auto LEN = 33000u;
-constexpr auto LEN2 = 100; // should be proportional to 4
 constexpr auto NTIMES1 = 100000u;
 constexpr auto NTIMES2 = 2000u;
 constexpr auto NTIMES3 = 500u;

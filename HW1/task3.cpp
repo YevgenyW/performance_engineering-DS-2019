@@ -39,6 +39,7 @@ namespace bits
 
 } // namespace bits
 
+
 int strpos(const char *str, const char *sub)
 {
     if (!str || !sub)
@@ -59,6 +60,7 @@ int strpos(const char *str, const char *sub)
 void test_task3_strstr()
 {
     auto start = std::chrono::high_resolution_clock::now();
+
     int pos = -1;
     for (std::size_t i = 0; i < NTIMES3; ++i)
     {
@@ -70,8 +72,6 @@ void test_task3_strstr()
             }
         }
     }
-
-//    std::cout<<"Substring found at "<<pos<<std::endl;
 
     auto end = std::chrono::high_resolution_clock::now();
     auto total_processing_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
@@ -107,6 +107,7 @@ int strpos_custom(const char *str, const char *sub)
 void test_task3_slow()
 {
     auto start = std::chrono::high_resolution_clock::now();
+
     int pos = -1;
     for (std::size_t i = 0; i < NTIMES3; ++i)
     {
@@ -118,8 +119,6 @@ void test_task3_slow()
             }
         }
     }
-
-//    std::cout<<"Substring found at "<<pos<<std::endl;
 
     auto end = std::chrono::high_resolution_clock::now();
     auto total_processing_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
@@ -163,6 +162,7 @@ size_t strpos_SSE(const char* str, size_t str_size, const char* sub, size_t sub_
 void test_task3_SSE()
 {
     auto start = std::chrono::high_resolution_clock::now();
+
     int pos = -1;
     for (std::size_t i = 0; i < NTIMES3; ++i)
     {
@@ -174,8 +174,6 @@ void test_task3_SSE()
             }
         }
     }
-
-//    std::cout<<"Substring found at "<<pos<<std::endl;
 
     auto end = std::chrono::high_resolution_clock::now();
     auto total_processing_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);

@@ -8,6 +8,8 @@
 
 using namespace std;
 
+constexpr auto LEN = 24; // should be proportional to 4
+
 template <typename T>
 T * matrix_init(std::size_t size, float init_value = 0.0)
 {
@@ -47,20 +49,6 @@ void matrix_multiplication_blas(const double *A, const double *B, double* res, s
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 m, n, k, alpha, A, k, B, n, beta, res, n);
 }
-
-//template <typename T>
-//T* matrix_transpose(const T *A, std::size_t size)
-//{
-//    auto trans = matrix_init<T>(size);
-//    for (std::size_t i = 0; i < size; ++i)
-//    {
-//        for (std::size_t j = 0; j < size; ++j)
-//        {
-//            trans[i*size+j] = A[i+j*size];
-//        }
-//    }
-//    return trans;
-//}
 
 template <typename T>
 T* matrix_transpose(const T *A, std::size_t size)
@@ -109,14 +97,14 @@ void matrix_multiplication(const float *A, const float *B, float* res, const std
 
 void test_task2_blas()
 {
-    auto A = matrix_init<double>(LEN2, 1);
-    auto B = matrix_init<double>(LEN2, 5);
-    auto res = matrix_init<double>(LEN2, 0);
+    auto A = matrix_init<double>(LEN, 1);
+    auto B = matrix_init<double>(LEN, 5);
+    auto res = matrix_init<double>(LEN, 0);
 
     auto start = std::chrono::high_resolution_clock::now();
     for (std::size_t i = 0; i < NTIMES2; ++i)
     {
-        matrix_multiplication_blas(A, B, res, LEN2);
+        matrix_multiplication_blas(A, B, res, LEN);
     }
 
     auto end = std::chrono::high_resolution_clock::now();
@@ -130,14 +118,14 @@ void test_task2_blas()
 
 void test_task2_SSE()
 {
-    auto A = matrix_init<float>(LEN2, 1);
-    auto B = matrix_init<float>(LEN2, 5);
-    auto res = matrix_init<float>(LEN2, 0);
+    auto A = matrix_init<float>(LEN, 1);
+    auto B = matrix_init<float>(LEN, 5);
+    auto res = matrix_init<float>(LEN, 0);
 
     auto start = std::chrono::high_resolution_clock::now();
     for (std::size_t i = 0; i < NTIMES2; ++i)
     {
-        matrix_multiplication(A, B, res, LEN2);
+        matrix_multiplication(A, B, res, LEN);
     }
 
     auto end = std::chrono::high_resolution_clock::now();
