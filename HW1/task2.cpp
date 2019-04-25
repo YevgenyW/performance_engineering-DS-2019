@@ -128,7 +128,7 @@ void test_task2_blas()
     matrix_clear((float*)res);
 }
 
-void test_task2()
+void test_task2_SSE()
 {
     auto A = matrix_init<float>(LEN2, 1);
     auto B = matrix_init<float>(LEN2, 5);
@@ -142,7 +142,7 @@ void test_task2()
 
     auto end = std::chrono::high_resolution_clock::now();
     auto total_processing_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    printf("test_task2\t %lld ms\t\n", total_processing_time.count());
+    printf("test_task2_SSE\t %lld ms\t\n", total_processing_time.count());
 
     matrix_clear(A);
     matrix_clear(B);

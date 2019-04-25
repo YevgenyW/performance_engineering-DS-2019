@@ -73,7 +73,7 @@ void test_task1_slow()
     printf("test_task1_slow\t %.2f s\t\n", clock_delta_sec);
 }
 
-void test_task1_fast()
+void test_task1_SSE()
 {
     clock_t start_t;
     clock_t end_t;
@@ -89,5 +89,5 @@ void test_task1_fast()
     end_t = clock();
     clock_delta = end_t - start_t;
     clock_delta_sec = (float) (clock_delta / sec_const);
-    printf("test_task1_fast\t %.2f s\t\n", clock_delta_sec);
+    printf("test_task1_SSE\t %.2f s\t\n", clock_delta_sec);
 }
