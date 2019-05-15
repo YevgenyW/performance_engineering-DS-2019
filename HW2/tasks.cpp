@@ -3,14 +3,9 @@
 //
 #include "tasks.hpp"
 
-#include <png.h>
-
 #include <chrono>
 #include <iostream>
 #include <math.h>
-
-//!!!
-#include <vector>
 
 constexpr auto num_iterations = 50;
 
@@ -68,7 +63,6 @@ img_t read_bmp(const char* filename)
 
 //            std::cout << "R: "<< (int)img.data[start_idx + j] << " G: " << (int)img.data[start_idx + j + 1]
 //                      << " B: " << (int)img.data[start_idx + j +2]<< std::endl;
-            break;
         }
     }
 
@@ -82,7 +76,7 @@ uint64_t sum_of_pixels_in_channel(const img_t& img, colors channel)
 
     auto start_idx = static_cast<int>(channel) - 1;
 
-    for(auto i = start_idx; i < (img.height * img.height); i+=3)
+    for(auto i = start_idx; i < (img.width * img.height *3); i+=3)
     {
         sum+=img.data[i];
     }
@@ -104,11 +98,12 @@ void test_task1()
 //        std::cout << "sum of pixels in red channel: " << sum_of_pixels_in_channel(img, colors::red) << std::endl;
 //        std::cout << "sum of pixels in gree channel: " << sum_of_pixels_in_channel(img, colors::green) << std::endl;
 //        std::cout << "sum of pixels in blue channel: " << sum_of_pixels_in_channel(img, colors::blue) << std::endl;
+        std::cout << "total: " << sum_of_pixels_in_channel(img, colors::blue) + sum_of_pixels_in_channel(img, colors::red) + sum_of_pixels_in_channel(img, colors::green) << std::endl;
     }
 
     auto end = std::chrono::high_resolution_clock::now();
     auto total_processing_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    printf("test_task1\t %llu ms\t\n", total_processing_time.count());
+    std::cout<<"test_task1\t"<< total_processing_time.count() << "\tms\n";
 
     delete [] img.data;
 }
@@ -148,7 +143,7 @@ void test_task2()
 
     auto end = std::chrono::high_resolution_clock::now();
     auto total_processing_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    printf("test_task2\t %llu ms\t\n", total_processing_time.count());
+    std::cout<<"test_task2\t"<< total_processing_time.count() << "\tms\n";
 
     delete [] img.data;
 }
@@ -250,7 +245,7 @@ void test_task3()
 
     auto end = std::chrono::high_resolution_clock::now();
     auto total_processing_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    printf("test_task3\t %llu ms\t\n", total_processing_time.count());
+    std::cout<<"test_task3\t"<< total_processing_time.count() << "\tms\n";
 
     delete [] grey_img.data;
     delete [] img.data;
