@@ -9,6 +9,8 @@
 
 constexpr auto num_iterations = 1;
 
+const char * path_to_image = "data/img-2_big.bmp";
+
 enum class colors : uint8_t
 {
     red = 1,
@@ -90,7 +92,7 @@ uint64_t sum_of_pixels_in_channel(const img_t& img, colors channel)
 
 void test_task1()
 {
-    auto img = read_bmp("../data/img-2.bmp");
+    auto img = read_bmp(path_to_image);
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -114,9 +116,9 @@ void test_task1()
 
 uint8_t min_in_channel(const img_t& img, colors channel)
 {
-    uint8_t min = 0;
+    uint8_t min = 255;
 
-    auto start_idx = (static_cast<int>(channel) - 1) * img.width*img.height;
+    auto start_idx = (static_cast<uint8_t >(channel) - 1) * img.width*img.height;
     auto end_idx = start_idx + img.width*img.height;
 
     for(auto i = start_idx; i < end_idx; i++)
@@ -132,18 +134,12 @@ uint8_t min_in_channel(const img_t& img, colors channel)
 
 void test_task2()
 {
-    auto img = read_bmp("../data/img-2.bmp");
+    auto img = read_bmp(path_to_image);
 
     auto start = std::chrono::high_resolution_clock::now();
 
     for (auto i = 0u; i < num_iterations; ++i)
     {
-        min_in_channel(img, colors::red);
-        min_in_channel(img, colors::green);
-        min_in_channel(img, colors::blue);
-//        std::cout << "min in red channel: " << (int)min_in_channel(img, colors::red) << std::endl;
-//        std::cout << "min in green channel: " << (int)min_in_channel(img, colors::green) << std::endl;
-//        std::cout << "min in blue channel: " << (int)min_in_channel(img, colors::blue) << std::endl;
 //        min_in_channel(img, colors::red);
 //        min_in_channel(img, colors::green);
 //        min_in_channel(img, colors::blue);
@@ -242,7 +238,7 @@ void convert_to_integral(img_t& grey_img)
 
 void test_task3()
 {
-    auto img = read_bmp("../data/img-2.bmp");
+    auto img = read_bmp(path_to_image);
     auto grey_img = to_greyscale(img);
     
     convert_to_integral(grey_img);
