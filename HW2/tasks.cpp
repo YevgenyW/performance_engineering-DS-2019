@@ -7,7 +7,7 @@
 #include <iostream>
 #include <math.h>
 
-constexpr auto num_iterations = 50;
+constexpr auto num_iterations = 1;
 
 enum class colors : uint8_t
 {
@@ -47,25 +47,29 @@ img_t read_bmp(const char* filename)
 //    std::cout << "Height: " << img.height << std::endl;
 
     int row_padded = (img.width*3 + 3) & (~3);
-    img.data = new unsigned char[row_padded*img.height];
-    unsigned char tmp;
-
+    img.data = new uint8_t [row_padded*img.height];
+    uint8_t * buf = new uint8_t [row_padded];
     for(auto i = 0u; i < img.height; ++i)
     {
-        auto start_idx = i*img.width*3;
-        fread(&img.data[start_idx], sizeof(unsigned char), row_padded, f);
-        for(auto j = 0u; j < img.width*3; j += 3)
+//        auto start_idx = i*img.width*3;
+        auto start_idx_r = i*img.width;
+        auto start_idx_g = i*img.width + img.height*img.width;
+        auto start_idx_b = i*img.width + img.height*img.width*2;
+        fread(buf, sizeof(uint8_t), row_padded, f);
+        auto k = 0u;
+        for(auto j = 0u; j < row_padded; j += 3)
         {
             // Convert (B, G, R) to (R, G, B)
-            tmp = img.data[start_idx + j];
-            img.data[start_idx + j] = img.data[start_idx + j + 2];
-            img.data[start_idx + j+ 2] = tmp;
+            img.data[start_idx_r + k] = buf[j+2];// == 0 ? 1 : buf[j+2];
+            img.data[start_idx_g + k] = buf[j+1];
+            img.data[start_idx_b + k] = buf[j];
+            ++k;
 
-//            std::cout << "R: "<< (int)img.data[start_idx + j] << " G: " << (int)img.data[start_idx + j + 1]
-//                      << " B: " << (int)img.data[start_idx + j +2]<< std::endl;
+//            std::cout << "R: "<< (int)img.data[start_idx_r + j] << " G: " << (int)img.data[start_idx_g + j]
+//                      << " B: " << (int)img.data[start_idx_b + j]<< std::endl;
         }
     }
-
+    delete [] buf;
     fclose(f);
     return img;
 }
@@ -74,9 +78,9 @@ uint64_t sum_of_pixels_in_channel(const img_t& img, colors channel)
 {
     uint64_t sum = 0;
 
-    auto start_idx = static_cast<int>(channel) - 1;
+    auto start_idx = (static_cast<int>(channel) - 1) * img.width*img.height;
 
-    for(auto i = start_idx; i < (img.width * img.height *3); i+=3)
+    for(auto i = start_idx; i < start_idx + (img.width * img.height); i++)
     {
         sum+=img.data[i];
     }
@@ -92,13 +96,13 @@ void test_task1()
 
     for (auto i = 0u; i < num_iterations; ++i)
     {
-        sum_of_pixels_in_channel(img, colors::red);
-        sum_of_pixels_in_channel(img, colors::green);
-        sum_of_pixels_in_channel(img, colors::blue);
-//        std::cout << "sum of pixels in red channel: " << sum_of_pixels_in_channel(img, colors::red) << std::endl;
-//        std::cout << "sum of pixels in gree channel: " << sum_of_pixels_in_channel(img, colors::green) << std::endl;
-//        std::cout << "sum of pixels in blue channel: " << sum_of_pixels_in_channel(img, colors::blue) << std::endl;
-        std::cout << "total: " << sum_of_pixels_in_channel(img, colors::blue) + sum_of_pixels_in_channel(img, colors::red) + sum_of_pixels_in_channel(img, colors::green) << std::endl;
+//        sum_of_pixels_in_channel(img, colors::red);
+//        sum_of_pixels_in_channel(img, colors::green);
+//        sum_of_pixels_in_channel(img, colors::blue);
+        std::cout << "sum of pixels in red channel: " << sum_of_pixels_in_channel(img, colors::red) << std::endl;
+        std::cout << "sum of pixels in green channel: " << sum_of_pixels_in_channel(img, colors::green) << std::endl;
+        std::cout << "sum of pixels in blue channel: " << sum_of_pixels_in_channel(img, colors::blue) << std::endl;
+//        std::cout << "total: " << sum_of_pixels_in_channel(img, colors::blue) + sum_of_pixels_in_channel(img, colors::red) + sum_of_pixels_in_channel(img, colors::green) << std::endl;
     }
 
     auto end = std::chrono::high_resolution_clock::now();
@@ -112,9 +116,10 @@ uint8_t min_in_channel(const img_t& img, colors channel)
 {
     uint8_t min = 0;
 
-    auto start_idx = static_cast<int>(channel) - 1;
+    auto start_idx = (static_cast<int>(channel) - 1) * img.width*img.height;
+    auto end_idx = start_idx + img.width*img.height;
 
-    for(auto i = start_idx; i < (img.height * img.height); i+=3)
+    for(auto i = start_idx; i < end_idx; i++)
     {
         if (min > img.data[i])
         {
@@ -139,6 +144,12 @@ void test_task2()
 //        std::cout << "min in red channel: " << (int)min_in_channel(img, colors::red) << std::endl;
 //        std::cout << "min in green channel: " << (int)min_in_channel(img, colors::green) << std::endl;
 //        std::cout << "min in blue channel: " << (int)min_in_channel(img, colors::blue) << std::endl;
+//        min_in_channel(img, colors::red);
+//        min_in_channel(img, colors::green);
+//        min_in_channel(img, colors::blue);
+        std::cout << "min(r): " << (int)min_in_channel(img, colors::red) << std::endl;
+        std::cout << "min(g): " << (int)min_in_channel(img, colors::green) << std::endl;
+        std::cout << "min(b): " << (int)min_in_channel(img, colors::blue) << std::endl;
     }
 
     auto end = std::chrono::high_resolution_clock::now();
