@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+void test_task3();
+
 template <typename Action>
 void test();
 

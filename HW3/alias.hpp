@@ -16,7 +16,7 @@ struct Test1_CPU
     }
     const char* desc()
     {
-        return "test_task1";
+        return "sum(CPU)";
     }
 };
 
@@ -28,7 +28,7 @@ struct Test1_Threads
     }
     const char* desc()
     {
-        return "test_task1_multi-threading";
+        return "sum(multi-threading)";
     }
 };
 
@@ -40,7 +40,7 @@ struct Test2_CPU
     }
     const char* desc()
     {
-        return "test_task2";
+        return "min(CPU)";
     }
 };
 
@@ -52,7 +52,7 @@ struct Test2_Threads
     }
     const char* desc()
     {
-        return "test_task2_multi-threading";
+        return "min(multi-threading)";
     }
 };
 
