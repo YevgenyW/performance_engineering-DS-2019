@@ -1,22 +1,21 @@
 //
 // Created by Yevhen Pozdniakov on 5/6/19.
 //
-#include "tasks.hpp"
-
-#include <stdio.h>
+#include "alias.hpp"
+#include "test.hpp"
+#include "utils.hpp"
 
 int main(int argc, char *argv[]) {
 
     printf("Function \t Time \n");
 
-    test_task1();
+    test<Test1_CPU>();
     printf("-----------------\n");
-    test_task2();
+
+    test<Test2_CPU>();
     printf("-----------------\n");
-    test_task3();
-//    test_task3_strstr();
-//    test_task3_slow();
-//    test_task3_SSE();
+
+    test<Test3_CPU>();
     return 0;
 }
 
