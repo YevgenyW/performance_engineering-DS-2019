@@ -36,7 +36,7 @@ struct Test2_CPU
 {
     uint64_t perform(const img_t& img, colors channel)
     {
-        return min_in_channel(img, colors::red);
+        return min_in_channel(img, channel);
     }
     const char* desc()
     {
@@ -48,11 +48,35 @@ struct Test2_Threads
 {
     uint64_t perform(const img_t& img, colors channel)
     {
-        return min_in_channel_threads(img, colors::red);
+        return min_in_channel_threads(img, channel);
     }
     const char* desc()
     {
         return "min(multi-threading)";
+    }
+};
+
+struct Test3_CPU
+{
+    uint64_t perform(const img_t& img, colors channel)
+    {
+        return convert_to_integral(const_cast<img_t&>(img), channel);
+    }
+    const char* desc()
+    {
+        return "integral image(CPU)";
+    }
+};
+
+struct Test3_Threads
+{
+    uint64_t perform(const img_t& img, colors channel)
+    {
+        return convert_to_integral_threads(const_cast<img_t&>(img), channel);
+    }
+    const char* desc()
+    {
+        return "integral image(multi-threading)";
     }
 };
 

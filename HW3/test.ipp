@@ -4,10 +4,6 @@
 
 #include "utils.hpp"
 
-constexpr auto num_iterations = 1;
-
-static const char * path_to_image = "../../data/img-2_big.bmp";
-
 template <typename Action>
 void test()
 {

@@ -20,18 +20,20 @@ struct img_t
     int width;
     int height;
     uint8_t * data;
+    uint8_t * r;
+    uint8_t * g;
+    uint8_t * b;
 };
 
 img_t read_bmp(const char* filename);
 
 uint64_t sum_of_pixels_in_channel(const img_t& img, colors channel);
 uint64_t sum_of_pixels_in_channel_threads(const img_t& img, colors channel);
+
 uint8_t min_in_channel(const img_t& img, colors channel);
 uint8_t min_in_channel_threads(const img_t& img, colors channel);
-img_t to_greyscale(const img_t& color_img);
-void print_color(const img_t& color_img);
-void print_grey(const img_t& grey_img);
-void convert_to_integral(img_t& grey_img);
 
+uint64_t convert_to_integral(img_t& img, colors color);
+uint64_t convert_to_integral_threads(img_t& img, colors color);
 
 #endif //HW3_UTILS_H
