@@ -25,17 +25,7 @@ struct img_t
     uint8_t * b;
 };
 
-
 uint8_t * get_channel_data(const img_t& img, colors color);
 img_t read_bmp(const char* filename);
-
-uint64_t sum_of_pixels_in_channel(const img_t& img, colors channel);
-uint64_t sum_of_pixels_in_channel_processes(const img_t& img, colors channel);
-
-uint8_t min_in_channel(const img_t& img, colors channel);
-uint8_t min_in_channel_threads(const img_t& img, colors channel);
-
-uint64_t convert_to_integral(img_t& img, colors color);
-uint64_t convert_to_integral_threads(img_t& img, colors color);
 
 #endif //HW4_UTILS_H

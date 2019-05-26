@@ -4,81 +4,80 @@
 
 #include "test.hpp"
 
-#include <thread>
+#include <mpi.h>
+
+#include <algorithm>
+#include <numeric>
 #include <vector>
 
-template<typename T, typename res_T>
-struct accumulate_block
+constexpr auto tag = 0u;
+
+uint64_t master_action_accumulate(const img_t& img, colors color, std::size_t num_slaves, std::size_t block_size, MPI_Status& Stat)
 {
-    void operator()(T* first, T* last, res_T& sum)
-    {
-        for (auto ptr = first; ptr < last; ++ptr)
-        {
-            sum += *ptr;
-        }
-    }
-};
+    uint8_t* data = get_channel_data(img, color);
 
-template<typename T, typename res_T>
-struct min_in_block
+    std::vector<uint64_t> results(num_slaves);
+
+    auto block = &data[0];
+    for(auto i = 0u; i < num_slaves; ++i)
+    {
+        auto dest = i + 1;
+
+        MPI_Send(block, block_size, MPI_UNSIGNED_CHAR, dest, tag, MPI_COMM_WORLD);
+        auto source = i + 1;
+        MPI_Recv(&results[i], 1, MPI_UNSIGNED_LONG_LONG, source, tag, MPI_COMM_WORLD, &Stat);
+
+        block+=block_size;
+    }
+    auto sum = std::accumulate(results.begin(), results.end(), 0);
+    sum = std::accumulate(block, data + img.width*img.height, sum);
+
+    return sum;
+}
+
+void slave_action_accumulate(std::size_t num_slaves, std::size_t block_size, MPI_Status& Stat)
 {
-    void operator()(T* first, T* last, res_T& min)
+    auto block = new uint8_t [block_size];
+    for(auto i = 0u; i < num_slaves; ++i)
     {
-        min = *first;
-        for (auto ptr = first; ptr < last; ++ptr)
-        {
-            if (min > *ptr)
-            min = *ptr;
-        }
+        MPI_Recv(block, block_size, MPI_UNSIGNED_CHAR, 0, tag, MPI_COMM_WORLD, &Stat);
+        uint64_t sum = std::accumulate(block, block + block_size, 0);
+        MPI_Send(&sum, 1, MPI_UNSIGNED_LONG_LONG, 0, tag, MPI_COMM_WORLD);
     }
-};
+    delete [] block;
+}
 
-template<typename T, typename Res_T, typename Action, typename Res>
-Res_T parallel_action(T * first, T * last, T init)
+uint64_t master_action_min(const img_t& img, colors color, std::size_t num_slaves, std::size_t block_size, MPI_Status& Stat)
 {
-    Res_T const length= last - first;
+    uint8_t* data = get_channel_data(img, color);
 
-    if (!length)
+    std::vector<uint8_t> mins(num_slaves);
+
+    auto block = &data[0];
+    for(auto i = 0u; i < num_slaves; ++i)
     {
-        return init;
+        auto dest = i + 1;
+
+        MPI_Send(block, block_size, MPI_UNSIGNED_CHAR, dest, tag, MPI_COMM_WORLD);
+        auto source = i + 1;
+        MPI_Recv(&mins[i], 1, MPI_UNSIGNED_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
+
+        block+=block_size;
     }
+    auto min = std::min_element(mins.begin(), mins.end());
 
-    Res_T const min_per_thread = 25;
+    return *min;
+}
 
-    Res_T const max_threads=
-            (length+min_per_thread - 1) / min_per_thread;
-
-    Res_T const hardware_threads=
-            std::thread::hardware_concurrency();
-
-    Res_T const num_threads=
-            std::min(hardware_threads != 0 ? hardware_threads : 2, max_threads);
-
-    Res_T const block_size = length / num_threads;
-
-    std::vector<Res_T> results(num_threads);
-    std::vector<std::thread> threads(num_threads-1);
-
-    auto block_start = first;
-
-    for(auto i = 0u; i < (num_threads-1); ++i)
+void slave_action_min(std::size_t num_slaves, std::size_t block_size, MPI_Status& Stat)
+{
+    auto block = new uint8_t [block_size];
+    for(auto i = 0u; i < num_slaves; ++i)
     {
-        auto block_end = block_start + block_size;
+        MPI_Recv(block, block_size, MPI_UNSIGNED_CHAR, 0, tag, MPI_COMM_WORLD, &Stat);
+        uint8_t min = *(std::min_element(block, block + block_size));
 
-        threads[i] = std::thread(
-                Action(),
-                block_start, block_end, std::ref(results[i]));
-
-        block_start=block_end;
+        MPI_Send(&min, 1, MPI_UNSIGNED_CHAR, 0, tag, MPI_COMM_WORLD);
     }
-    accumulate_block<T, Res_T>()(
-            block_start, last, results[num_threads-1]);
-
-    std::for_each(threads.begin(),threads.end(),
-                  std::mem_fn(&std::thread::join));
-
-    Res_T res = 0;
-    Res()(&results[0], &results[num_threads], res);
-
-    return res;
+    delete [] block;
 }

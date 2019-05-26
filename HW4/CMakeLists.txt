@@ -4,8 +4,6 @@ project(HW4)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(MPI REQUIRED)
-# add this line only when you are using openmpi which has a different c++ bindings
-#add_definitions(-DOMPI_SKIP_MPICXX)
 
 add_executable(HW4 main.cpp utils.cpp)
 

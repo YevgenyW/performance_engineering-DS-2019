@@ -6,79 +6,45 @@
 #define HW4_ALIAS_H
 
 #include "utils.hpp"
-#include <iostream>
+#include "multi_process_funcs.hpp"
 
-struct Test1_CPU
-{
-    uint64_t perform(const img_t& img, colors channel)
-    {
-        return sum_of_pixels_in_channel(img, channel);
-    }
-    const char* desc()
-    {
-        return "sum(CPU)";
-    }
-};
+#include <mpi.h>
+#include <iostream>
 
 struct Test1_Processes
 {
-    uint64_t perform(const img_t& img, colors channel)
+    uint64_t perform_master(const img_t& img, colors color, std::size_t num_slaves, std::size_t block_size, MPI_Status& Stat)
     {
-        return sum_of_pixels_in_channel_processes(img, channel);
+        return master_action_accumulate(img, color, num_slaves, block_size, Stat);
     }
+
+    void perform_slave(std::size_t num_slaves, std::size_t block_size, MPI_Status& Stat)
+    {
+        slave_action_accumulate(num_slaves, block_size, Stat);
+    }
+
     const char* desc()
     {
         return "sum(multi-threading)";
     }
 };
-/*
-struct Test2_CPU
-{
-    uint64_t perform(const img_t& img, colors channel)
-    {
-        return min_in_channel(img, channel);
-    }
-    const char* desc()
-    {
-        return "min(CPU)";
-    }
-};
 
-struct Test2_Threads
+struct Test2_Processes
 {
-    uint64_t perform(const img_t& img, colors channel)
+    uint64_t perform_master(const img_t& img, colors color, std::size_t num_slaves, std::size_t block_size, MPI_Status& Stat)
     {
-        return min_in_channel_threads(img, channel);
+        return master_action_min(img, color, num_slaves, block_size, Stat);
     }
+
+    void perform_slave(std::size_t num_slaves, std::size_t block_size, MPI_Status& Stat)
+    {
+        slave_action_min(num_slaves, block_size, Stat);
+    }
+
     const char* desc()
     {
         return "min(multi-threading)";
     }
 };
-
-struct Test3_CPU
-{
-    uint64_t perform(const img_t& img, colors channel)
-    {
-        return convert_to_integral(const_cast<img_t&>(img), channel);
-    }
-    const char* desc()
-    {
-        return "integral image(CPU)";
-    }
-};
-
-struct Test3_Threads
-{
-    uint64_t perform(const img_t& img, colors channel)
-    {
-        return convert_to_integral_threads(const_cast<img_t&>(img), channel);
-    }
-    const char* desc()
-    {
-        return "integral image(multi-threading)";
-    }
-};
-*/
 
 #endif //HW4_ALIAS_H
